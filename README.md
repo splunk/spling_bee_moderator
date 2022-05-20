@@ -37,6 +37,11 @@ simultaneously. Commands can also be run from individual packages. This may be b
 For more granular control of development scripts, consider using [Lerna](https://github.com/lerna/lerna) directly.
 
 
+## To Package This App
+
+```COPYFILE_DISABLE=true tar -zcvh --exclude='local/' --exclude='stage/' --exclude='local.meta' --exclude='.DS_Store' -f timervis.tar.gz timer-vis-app/```
+
+
 ## Code Formatting
 
 TimerVisApp uses [prettier](https://github.com/prettier/prettier) to ensure consistent code formatting. It is recommended
