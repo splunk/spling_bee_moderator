@@ -51,6 +51,7 @@ const Timer = (props) => {
             }
         );
     }
+
     async function startTimer() {
         setIsPlaying(true);
 

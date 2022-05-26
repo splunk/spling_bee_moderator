@@ -2,6 +2,7 @@ import React from 'react';
 import layout from '@splunk/react-page';
 
 import { SplunkThemeProvider } from '@splunk/themes';
+import { BrowserRouter } from 'react-router-dom';
 
 import Heading from '@splunk/react-ui/Heading';
 import TimerVis from '@splunk/timer-vis';
@@ -13,9 +14,11 @@ const themeToVariant = {
 
 // use DashboardCore to render a simple dashboard
 layout(
-    <SplunkThemeProvider {...themeToVariant.enterpriseDark}>
-        <TimerVis></TimerVis>
-    </SplunkThemeProvider>,
+    <BrowserRouter>
+        <SplunkThemeProvider {...themeToVariant.enterpriseDark}>
+            <TimerVis></TimerVis>
+        </SplunkThemeProvider>
+    </BrowserRouter>,
     {
         pageTitle: 'Countdown Timer App',
         hideFooter: true,

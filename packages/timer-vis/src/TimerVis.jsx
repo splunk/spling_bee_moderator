@@ -1,14 +1,14 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import EnterprisePreset from '@splunk/dashboard-presets/EnterprisePreset';
 import DashboardCore from '@splunk/dashboard-core';
 import { DashboardContextProvider } from '@splunk/dashboard-context';
+import { useNavigate } from 'react-router-dom';
 
 import CustomTimer from './customTimer';
 
 import Message from '@splunk/react-ui/Message';
 
 import { SplunkThemeProvider } from '@splunk/themes';
-import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 
 var search = window.location.search;
 const params = new URLSearchParams(search);
@@ -90,7 +90,7 @@ async function downloadImage(src, assetType) {
 
 var seenImages = {};
 
-class TimelapseControls extends React.Component {
+class TimerVisApp extends React.Component {
     constructor(props) {
         super(props);
         var darktheme = false;
@@ -106,22 +106,29 @@ class TimelapseControls extends React.Component {
             value: 1,
             dataSources: {},
             width: 100,
+            tokenBindings: {},
+            tokens: {},
             height: 1000,
             dark: darktheme,
             leftOpen: false,
             openPanelId: 2,
             openInputsPanelId: 2,
             numberOfSearches: 0,
+            random: 0,
+            navigate: this.props.navigate,
             numberOfSearchesComplete: 0,
+
             dashboardID: params.get('dashboardid'),
-            fullscreen: false,
-            fullscreenhandler: props.handle,
         };
         this.fetchDefinition();
+
+        this.resetInputs = this.resetInputs.bind(this);
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
 
     componentDidMount() {
         this.updateWindowDimensions();
+
         window.addEventListener('resize', this.updateWindowDimensions);
     }
 
@@ -176,6 +183,9 @@ class TimelapseControls extends React.Component {
                 if (viz.type === 'viz.img') {
                     viz.options.src = await downloadImage(viz.options.src, 'images');
                 }
+                if (viz.type === 'splunk.image') {
+                    viz.options.src = await downloadImage(viz.options.src, 'images');
+                }
                 if (viz.type === 'splunk.choropleth.svg') {
                     viz.options.svg = await downloadImage(viz.options.svg, 'images');
                 }
@@ -205,10 +215,6 @@ class TimelapseControls extends React.Component {
         this.setState({ hasNotBeenFetched: false });
     };
 
-    handleDarkModeClick(event) {
-        this.setState({ dark: !this.state.dark });
-    }
-
     handleRequestOpen(dockPosition) {
         if (dockPosition === 'bottomOpen') {
             setBottomOpen(true);
@@ -220,27 +226,45 @@ class TimelapseControls extends React.Component {
             setTopOpen(true);
         }
     }
-    openLeftPanel() {
-        this.handleRequestOpen('leftOpen');
-    }
-
-    handleRequestClose() {
-        this.setState({ leftOpen: false });
-    }
-
-    handlePanelChange(e, { panelId: panelValue }) {
-        this.setState({ openPanelId: panelValue });
-    }
-
-    handleInputsPanelChange(e, { panelId: panelValue }) {
-        this.setState({ openInputsPanelId: panelValue });
-    }
-
-    handleFullScreen() {
-        console.log('Full Screen Clicked');
-    }
 
     onKeyPressed(e) {}
+
+    resetInputs() {
+        //let currentUrlParams = new URLSearchParams(window.location.search);
+        //console.log(currentUrlParams.toString());
+
+        console.log(this.props.dashboardCoreApi.current);
+        for (var input in this.state.def.inputs) {
+            console.log(this.state.def.inputs[input].token);
+            /*currentUrlParams.set(
+                'form.' + this.state.def.inputs[input].options.token,
+                this.state.def.inputs[input].options.defaultValue
+            );*/
+
+            //if (this.state.def.inputs[input].options.token == 'dropdown_token') {
+            /*var token_name = this.state.def.inputs[input].options.token;
+            var token_value = this.state.def.inputs[input].options.defaultValue;
+            this.setState((prevState) => ({
+                tokens: { form: { ...prevState.tokens.forms, [token_name]: token_value } },
+            }));
+            console.log(this.state.tokens);
+            console.log(token_name);*/
+            // }
+        }
+
+        /*this.props.dashboardCoreApi.current.unsetTokenBinding({
+            tokenName: 'text_token',
+        });
+        this.props.dashboardCoreApi.current.unsetTokenBinding({
+            tokenName: 'dropdown_token',
+        });
+        this.props.dashboardCoreApi.current.setTokenBindings({
+            tokenBindings: { text_token: 'Default Text', dropdown_token: '*' },
+        });*/
+        this.setState({ random: Math.random() * 1000000 });
+        this.setState({ tokenBindings: { text_token: 'Default Text', dropdown_token: '*' } });
+        console.log(this.state.random);
+    }
 
     render() {
         const colStyle = {
@@ -260,54 +284,76 @@ class TimelapseControls extends React.Component {
             },
         };
 
+        const featureFlags = {
+            enableSmartSourceDS: true,
+            enableTokensInUrl: false,
+        };
+
         const dash = (
-            <DashboardContextProvider>
+            <DashboardContextProvider featureFlags={featureFlags}>
                 <DashboardCore
                     width={this.state.width}
                     height="calc(100vh - 78px)"
                     definition={this.state.def}
                     preset={customPreset}
+                    dashboardCoreApiRef={this.props.registerDashboardCoreApi}
+                    tokenBinding={this.state.tokenBindings}
                     initialMode="view"
+                    key={this.state.random}
                 />
             </DashboardContextProvider>
         );
         return (
-            <FullScreen handle={this.state.fullscreenhandler}>
-                <div
-                    tabIndex="0"
-                    style={
-                        this.state.dark
-                            ? {
-                                  textAlign: 'center',
-                                  margin: 'auto',
-                                  align: 'center',
-                                  width: '100%',
-                                  backgroundColor: '#171D21',
-                              }
-                            : {
-                                  textAlign: 'center',
-                                  margin: 'auto',
-                                  align: 'center',
-                                  width: '100%',
-                                  backgroundColor: '#FFFFFF',
-                              }
-                    }
-                    onKeyDown={this.onKeyPressed}
+            <div
+                tabIndex="0"
+                style={
+                    this.state.dark
+                        ? {
+                              textAlign: 'center',
+                              margin: 'auto',
+                              align: 'center',
+                              width: '100%',
+                              backgroundColor: '#171D21',
+                          }
+                        : {
+                              textAlign: 'center',
+                              margin: 'auto',
+                              align: 'center',
+                              width: '100%',
+                              backgroundColor: '#FFFFFF',
+                          }
+                }
+                onKeyDown={this.onKeyPressed}
+            >
+                <SplunkThemeProvider
+                    family="enterprise"
+                    colorScheme={this.state.dark ? 'dark' : 'light'}
+                    density="compact"
                 >
-                    <SplunkThemeProvider
-                        family="enterprise"
-                        colorScheme={this.state.dark ? 'dark' : 'light'}
-                        density="compact"
+                    <table
+                        style={{
+                            textAlign: 'center',
+                            margin: 'auto',
+                            align: 'center',
+                            width: this.state.width,
+                        }}
                     >
-                        <table
-                            style={{
-                                textAlign: 'center',
-                                margin: 'auto',
-                                align: 'center',
-                                width: this.state.width,
-                            }}
-                        >
-                            <tbody>
+                        <tbody>
+                            <tr>
+                                <td
+                                    colSpan="2"
+                                    style={{
+                                        ...colStyle,
+                                        width: '100%',
+                                        paddingTop: '0px',
+                                        paddingBottom: '0px',
+                                    }}
+                                >
+                                    <>{dash}</>
+                                </td>
+                            </tr>
+
+                            {this.state.error_no_dash == true ? (
                                 <tr>
                                     <td
                                         colSpan="2"
@@ -318,42 +364,36 @@ class TimelapseControls extends React.Component {
                                             paddingBottom: '0px',
                                         }}
                                     >
-                                        <>{dash}</>
+                                        <div>
+                                            <Message appearance="fill" type="error">
+                                                Cannot load dashboard with ID:{' '}
+                                                {this.state.dashboardID}.
+                                            </Message>
+                                        </div>
                                     </td>
                                 </tr>
-
-                                {this.state.error_no_dash == true ? (
-                                    <tr>
-                                        <td
-                                            colSpan="2"
-                                            style={{
-                                                ...colStyle,
-                                                width: '100%',
-                                                paddingTop: '0px',
-                                                paddingBottom: '0px',
-                                            }}
-                                        >
-                                            <div>
-                                                <Message appearance="fill" type="error">
-                                                    Cannot load dashboard with ID:{' '}
-                                                    {this.state.dashboardID}.
-                                                </Message>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    <></>
-                                )}
-                            </tbody>
-                        </table>
-                    </SplunkThemeProvider>
-                </div>
-            </FullScreen>
+                            ) : (
+                                <></>
+                            )}
+                        </tbody>
+                    </table>
+                </SplunkThemeProvider>
+            </div>
         );
     }
 }
 
-export default (props) => {
-    var handle = useFullScreenHandle();
-    return <TimelapseControls handle={handle} def={{}} />;
+export default () => {
+    const navigate = useNavigate();
+    const dashboardCoreApi = useRef();
+    const registerDashboardCoreApi = useCallback((api) => {
+        dashboardCoreApi.current = api; // this can be a ref or even state(i used ref here)
+    });
+    return (
+        <TimerVisApp
+            navigate={navigate}
+            dashboardCoreApi={dashboardCoreApi}
+            registerDashboardCoreApi={registerDashboardCoreApi}
+        />
+    );
 };
