@@ -148,7 +148,7 @@ const Timer = (props) => {
                                 <CountdownCircleTimer
                                     key={key}
                                     isPlaying={isPlaying}
-                                    duration={120}
+                                    duration={props.options.range}
                                     colors="url(#your-unique-id)"
                                     colorsTime={[7, 5, 2, 0]}
                                 >
@@ -209,8 +209,10 @@ const Timer = (props) => {
                 <svg>
                     <defs>
                         <linearGradient id="your-unique-id" x1="1" y1="0" x2="0" y2="0">
-                            <stop offset="5%" stopColor="#ab006b" />
-                            <stop offset="95%" stopColor="#ec008c" />
+                            <stop offset="1%" stopColor="#ED0080" />{' '}
+                            <stop offset="40%" stopColor="#ED0080" />
+                            <stop offset="80%" stopColor="#F05A22" />
+                            <stop offset="99%" stopColor="#F99D1C" />
                         </linearGradient>
                     </defs>
                 </svg>

@@ -289,7 +289,7 @@ class TimerVisApp extends React.Component {
             enableTokensInUrl: false,
         };
 
-        const dash = (
+        const dash = this.state.def ? (
             <DashboardContextProvider featureFlags={featureFlags}>
                 <DashboardCore
                     width={this.state.width}
@@ -302,6 +302,8 @@ class TimerVisApp extends React.Component {
                     key={this.state.random}
                 />
             </DashboardContextProvider>
+        ) : (
+            <></>
         );
         return (
             <div

@@ -11,7 +11,7 @@ const CustomTimer = ({
     description,
     options,
 }) => {
-    return <Timer dataSources={dataSources} />;
+    return <Timer dataSources={dataSources} options={options} />;
 };
 
 CustomTimer.propTypes = {
