@@ -1,4 +1,4 @@
-# Contributing to TimerVisApp
+# Contributing to SPLing Bee Moderator App
 
 ## Overview
 
