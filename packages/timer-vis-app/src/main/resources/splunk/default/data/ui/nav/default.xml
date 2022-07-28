@@ -1,5 +1,0 @@
-<nav>
-  <view name="moderator_instructions" />
-  <a href="/app/timer-vis-app/start?dashboardid=spling_bee_content">Play</a>
-  <view name="leaderboard" />
-</nav>

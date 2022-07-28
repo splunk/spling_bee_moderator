@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<view template="spling_bee_moderator:/templates/start.html" type="html">
+	<label>Start</label>
+</view>

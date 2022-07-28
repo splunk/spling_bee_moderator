@@ -1,0 +1,5 @@
+<nav>
+  <view name="moderator_instructions" />
+  <a href="/app/spling_bee_moderator/start?dashboardid=spling_bee_content">Play</a>
+  <view name="leaderboard" />
+</nav>
