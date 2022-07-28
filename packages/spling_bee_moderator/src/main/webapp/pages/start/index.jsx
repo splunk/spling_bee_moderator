@@ -20,7 +20,7 @@ layout(
         </SplunkThemeProvider>
     </BrowserRouter>,
     {
-        pageTitle: 'Countdown Timer App',
+        pageTitle: 'SPLBee Moderator App',
         hideFooter: true,
         layout: 'fixed',
     }
