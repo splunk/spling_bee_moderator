@@ -2,6 +2,15 @@
 
 ## Overview
 
+This code repository contains two things:
+
+1. The released SPLing Bee Moderator App. Found in the "releases" section here: https://github.com/splunk/spling_bee_moderator/releases
+2. The source code for SPLing Bee Moderator App. Which is the code you see in the Github Repository. 
+
+The source code found in this Github repository, is the code to build the SPLing Bee Moderator App from scratch. It is includes the custom timer visualization we created for the game. If you are just looking to install the app as is, than you do not need to use this source code or build the app from scratch. We recommend downloading the app from the releases section. We simply wanted to make it an option for anyone who wanted to know how we built it. 
+
+## Overview for the Code
+
 The project contains a variety of packages that are published and versioned collectively. Each package lives in its own
 directory in the `/packages` directory. Each package is self contained, and defines its dependencies in a package.json file.
 
