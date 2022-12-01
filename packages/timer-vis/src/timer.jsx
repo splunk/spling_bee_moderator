@@ -1,121 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
-
 import Button from '@splunk/react-ui/Button';
-import https from 'https';
-
-const agent = new https.Agent({
-    rejectUnauthorized: false,
-});
-
-var username = 'service_account';
-var password = 'timer_00';
 
 const Timer = (props) => {
-    const vizRef = useRef();
-
     const [isPlaying, setIsPlaying] = useState(false);
     const [key, setKey] = useState(0);
 
     var style = { align: 'center', textAlign: 'center', margin: 'auto' };
 
-    async function sendReset() {
-        const httpsAgent = new https.Agent({
-            rejectUnauthorized: false,
-        });
-
-        var key = await fetch('https://localhost:8089/services/auth/login', {
-            method: 'POST',
-            body: new URLSearchParams({
-                username: username,
-                password: password,
-                output_mode: 'json',
-            }),
-            httpsAgent: agent,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                return data['sessionKey'];
-            });
-
-        const body = await fetch(
-            `https://localhost:8089/services/receivers/simple?index=main&sourcetype=timer_status`,
-            {
-                method: 'POST',
-                body: 'event=reset ' + window.location.search,
-                httpsAgent: agent,
-                headers: { Authorization: `Splunk ${key}` },
-            }
-        );
-    }
-
     async function startTimer() {
         setIsPlaying(true);
-
-        const httpsAgent = new https.Agent({
-            rejectUnauthorized: false,
-        });
-
-        var key = await fetch('https://localhost:8089/services/auth/login', {
-            method: 'POST',
-            body: new URLSearchParams({
-                username: username,
-                password: password,
-                output_mode: 'json',
-            }),
-            httpsAgent: agent,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                return data['sessionKey'];
-            });
-
-        const body = await fetch(
-            `https://localhost:8089/services/receivers/simple?index=main&sourcetype=timer_status`,
-            {
-                method: 'POST',
-                body: 'event=start ' + window.location.search,
-                httpsAgent: agent,
-                headers: { Authorization: `Splunk ${key}` },
-            }
-        );
     }
 
     async function stopTimer() {
         setIsPlaying(false);
-
-        var key = await fetch('https://localhost:8089/services/auth/login', {
-            method: 'POST',
-            body: new URLSearchParams({
-                username: username,
-                password: password,
-                output_mode: 'json',
-            }),
-            httpsAgent: agent,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                return data['sessionKey'];
-            });
-
-        const body = await fetch(
-            `https://localhost:8089/services/receivers/simple?index=main&sourcetype=timer_status`,
-            {
-                method: 'POST',
-                body: 'event=stop ' + window.location.search,
-                httpsAgent: agent,
-                headers: { Authorization: `Splunk ${key}` },
-            }
-        );
     }
 
     const renderTime = ({ remainingTime }) => {
@@ -194,17 +92,15 @@ const Timer = (props) => {
                                     label="Reset"
                                     appearance="destructive"
                                     onClick={() => {
-                                        setKey((prevKey) => prevKey + 1);
+                                        setKey((prevKey) => {
+                                            return prevKey + 1;
+                                        });
                                         setIsPlaying(false);
-                                        sendReset();
                                     }}
                                 />
                             </td>
                         </tr>
                     </tbody>
-                    <tr>
-                        <td colSpan="3"></td>
-                    </tr>
                 </table>
                 <svg>
                     <defs>

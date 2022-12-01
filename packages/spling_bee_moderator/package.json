@@ -13,10 +13,13 @@
     "start": "webpack --watch",
     "stylelint": "stylelint \"src/**/*.{js,jsx}\" --config stylelint.config.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "eslint": "^8.28.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.2.0",
-    "@splunk/timer-vis": "^0.0.1",
+    "@babel/eslint-parser": "^7.5.4",
+    "@babel/preset-react": "^7.18.6",
     "@splunk/babel-preset": "^3.0.0",
     "@splunk/eslint-config": "^4.0.0",
     "@splunk/react-page": "^5.1.0",
@@ -24,8 +27,8 @@
     "@splunk/splunk-utils": "^2.1.0",
     "@splunk/stylelint-config": "^4.0.0",
     "@splunk/themes": "^0.9.0",
+    "@splunk/timer-vis": "^0.0.1",
     "@splunk/webpack-configs": "^5.0.0",
-    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.0.4",
     "copy-webpack-plugin": "^4.5.2",
     "eslint": "^7.14.0",

@@ -2,15 +2,7 @@ import React from 'react';
 import SplunkVisualization from '@splunk/visualizations/common/SplunkVisualization';
 import Timer from './timer';
 
-const CustomTimer = ({
-    dataSources,
-    width,
-    height,
-    background = 'transparent',
-    title,
-    description,
-    options,
-}) => {
+const CustomTimer = ({ dataSources, options }) => {
     return <Timer dataSources={dataSources} options={options} />;
 };
 

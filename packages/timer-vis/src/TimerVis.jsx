@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import EnterprisePreset from '@splunk/dashboard-presets/EnterprisePreset';
 import DashboardCore from '@splunk/dashboard-core';
 import { DashboardContextProvider } from '@splunk/dashboard-context';
@@ -61,9 +61,6 @@ async function downloadImage(src, assetType) {
     }
     const [type, id] = src.split('://');
     if (type === 'https' || type === 'http') {
-        const res = fetch(src);
-        const data = res.buffer();
-        const mimeType = res.headers.get('Content-Type');
         return src;
     }
 
@@ -128,7 +125,6 @@ class TimerVisApp extends React.Component {
 
     componentDidMount() {
         this.updateWindowDimensions();
-
         window.addEventListener('resize', this.updateWindowDimensions);
     }
 
@@ -210,7 +206,6 @@ class TimerVisApp extends React.Component {
         }
 
         this.setState({ def });
-
         this.setState({ defOrig: this.state.def });
         this.setState({ hasNotBeenFetched: false });
     };
@@ -227,43 +222,9 @@ class TimerVisApp extends React.Component {
         }
     }
 
-    onKeyPressed(e) {}
-
     resetInputs() {
-        //let currentUrlParams = new URLSearchParams(window.location.search);
-        //console.log(currentUrlParams.toString());
-
-        console.log(this.props.dashboardCoreApi.current);
-        for (var input in this.state.def.inputs) {
-            console.log(this.state.def.inputs[input].token);
-            /*currentUrlParams.set(
-                'form.' + this.state.def.inputs[input].options.token,
-                this.state.def.inputs[input].options.defaultValue
-            );*/
-
-            //if (this.state.def.inputs[input].options.token == 'dropdown_token') {
-            /*var token_name = this.state.def.inputs[input].options.token;
-            var token_value = this.state.def.inputs[input].options.defaultValue;
-            this.setState((prevState) => ({
-                tokens: { form: { ...prevState.tokens.forms, [token_name]: token_value } },
-            }));
-            console.log(this.state.tokens);
-            console.log(token_name);*/
-            // }
-        }
-
-        /*this.props.dashboardCoreApi.current.unsetTokenBinding({
-            tokenName: 'text_token',
-        });
-        this.props.dashboardCoreApi.current.unsetTokenBinding({
-            tokenName: 'dropdown_token',
-        });
-        this.props.dashboardCoreApi.current.setTokenBindings({
-            tokenBindings: { text_token: 'Default Text', dropdown_token: '*' },
-        });*/
         this.setState({ random: Math.random() * 1000000 });
         this.setState({ tokenBindings: { text_token: 'Default Text', dropdown_token: '*' } });
-        console.log(this.state.random);
     }
 
     render() {
@@ -274,7 +235,6 @@ class TimerVisApp extends React.Component {
             whiteSpace: 'nowrap',
             textAlign: 'center',
         };
-        const textStyle = { textAlign: 'center' };
 
         const customPreset = {
             ...EnterprisePreset,
@@ -290,12 +250,11 @@ class TimerVisApp extends React.Component {
         };
 
         const dash = this.state.def ? (
-            <DashboardContextProvider featureFlags={featureFlags}>
+            <DashboardContextProvider preset={customPreset} featureFlags={featureFlags}>
                 <DashboardCore
                     width={this.state.width}
                     height="calc(100vh - 78px)"
                     definition={this.state.def}
-                    preset={customPreset}
                     dashboardCoreApiRef={this.props.registerDashboardCoreApi}
                     tokenBinding={this.state.tokenBindings}
                     initialMode="view"

@@ -1,3 +1,12 @@
 module.exports = {
-    extends: '@splunk/eslint-config/browser-prettier',
+    parser: '@babel/eslint-parser',
+    parserOptions: {
+        requireConfigFile: false,
+        babelOptions: {
+            babelrc: false,
+            configFile: false,
+            // your babel options
+            presets: ['@babel/preset-env'],
+        },
+    },
 };
